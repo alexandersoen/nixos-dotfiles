@@ -22,6 +22,13 @@
     windowManager.qtile.enable = true;
   };
 
+  services.xserver.windowManager.dwm = {
+    enable = true;
+    package = pkgs.dwm.overrideAttrs {
+      src = ./config/dwm;
+    };
+  };
+
   users.users.asoen = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
