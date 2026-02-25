@@ -11,9 +11,6 @@ in
   home.stateVersion = "25.11";
   programs.bash = {
     enable = true;
-    shellAliases = {
-      vim = "nvim";
-    };
   };
 
   # home.file.".config/nvim".source = ./config/nvim;
@@ -23,11 +20,16 @@ in
   };
 
   home.packages = with pkgs; [
-    neovim
     tree-sitter
     nodejs
     gcc
   ];
+
+  programs.neovim = {
+    enable = true;
+    viAlias = true;
+    vimAlias = true;
+  };
 
   # GitHub
   programs.git = {
