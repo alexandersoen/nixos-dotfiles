@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, inputs, ... }:
 
 {
   imports =
@@ -24,9 +24,9 @@
 
   services.xserver.windowManager.dwm = {
     enable = true;
-    package = pkgs.dwm.overrideAttrs {
-      src = ./config/dwm;
-    };
+    package = pkgs.dwm.overrideAttrs (oldAttrs: {
+      src = inputs.dwm-src;
+    });
   };
 
   users.users.asoen = {

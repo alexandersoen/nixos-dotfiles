@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "dwm-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1771597889,
+        "narHash": "sha256-dcLIIEfSNL2zFEe83lSWuRzlg2uvGe06owO876QDlVU=",
+        "ref": "refs/heads/main",
+        "rev": "c3dd6a829b3f5cb9474bcca787a9c8a86932d75d",
+        "revCount": 1736,
+        "type": "git",
+        "url": "file:///home/asoen/nixos-dotfiles/config/dwm"
+      },
+      "original": {
+        "type": "git",
+        "url": "file:///home/asoen/nixos-dotfiles/config/dwm"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -38,6 +54,7 @@
     },
     "root": {
       "inputs": {
+        "dwm-src": "dwm-src",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs"
       }
