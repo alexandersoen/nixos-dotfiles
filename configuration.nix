@@ -24,9 +24,9 @@
 
   services.xserver.windowManager.dwm = {
     enable = true;
-    package = pkgs.dwm.overrideAttrs (oldAttrs: {
-      src = inputs.dwm-src;
-    });
+    package = pkgs.dwm.overrideAttrs {
+      src = /home/asoen/nixos-dotfiles/config/dwm;
+    };
   };
 
   users.users.asoen = {

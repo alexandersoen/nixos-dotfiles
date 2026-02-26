@@ -6,6 +6,11 @@ let
 in
 
 {
+  imports = [
+    ./modules/suckless.nix
+    ./modules/neovim.nix
+  ];
+
   home.username = "asoen";
   home.homeDirectory = "/home/asoen";
   home.stateVersion = "25.11";
@@ -13,31 +18,20 @@ in
     enable = true;
   };
 
-  # home.file.".config/nvim".source = ./config/nvim;
-  xdg.configFile."nvim" = {
-    source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/nvim";
-    recursive = true;
-  };
+  # home.packages = with pkgs; [
+  # ];
 
-  home.packages = with pkgs; [
-    tree-sitter
-    nodejs
-    gcc
-  ];
-
-  programs.neovim = {
-    enable = true;
-    viAlias = true;
-    vimAlias = true;
-  };
 
   # GitHub
   programs.git = {
     enable = true;
-    userName = "alexandersoen";
-    userEmail = "alexandersoen@gmail.com";
 
-    extraConfig = {
+    settings = {
+      user = {
+        name = "alexandersoen"; 
+        email = "alexandersoen@gmail.com";
+      };
+
       init.defaultBranch = "main";
       pull.rebase = true;
       core.editor = "nvim";
