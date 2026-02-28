@@ -19,6 +19,7 @@ in
 
   home.packages = with pkgs; [
     feh
+    google-chrome
   ];
 
   # Terminal

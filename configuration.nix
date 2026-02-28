@@ -42,8 +42,6 @@
     ];
   };
 
-  programs.firefox.enable = true;
-
   environment.systemPackages = with pkgs; [
     vim
     wget
@@ -63,4 +61,6 @@
 
   virtualisation.virtualbox.guest.enable = true;
   virtualisation.virtualbox.guest.dragAndDrop = true;
+
+  nixpkgs.config.allowUnfree = true;
 }
