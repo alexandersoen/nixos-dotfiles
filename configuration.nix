@@ -32,6 +32,7 @@
       src = /home/asoen/nixos-dotfiles/config/dwm;
     };
   };
+  services.picom.enable = true;
 
   users.users.asoen = {
     isNormalUser = true;
