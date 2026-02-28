@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 let
   dotfiles = "${config.home.homeDirectory}/nixos-dotfiles/config";
@@ -7,15 +12,20 @@ in
 
 {
   xdg.configFile."nvim" = {
-    source = config.lib.file.mkOutOfStoreSymlink "${dotfiles}/nvim";
+    source = create_symlink "${dotfiles}/nvim";
     recursive = true;
   };
 
   home.packages = with pkgs; [
+    # Plugin
     tree-sitter
     nodejs
     gcc
     ripgrep
+
+    # Nix
+    nil
+    nixfmt
   ];
 
   programs.neovim = {
@@ -24,4 +34,3 @@ in
     vimAlias = true;
   };
 }
-

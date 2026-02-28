@@ -1,10 +1,5 @@
 { config, pkgs, ... }:
 
-let
-  dotfiles = "${config.home.homeDirectory}/nixos-dotfiles/config";
-  create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
-in
-
 {
   imports = [
     ./modules/suckless.nix
@@ -21,14 +16,13 @@ in
   # home.packages = with pkgs; [
   # ];
 
-
   # GitHub
   programs.git = {
     enable = true;
 
     settings = {
       user = {
-        name = "alexandersoen"; 
+        name = "alexandersoen";
         email = "alexandersoen@gmail.com";
       };
 
