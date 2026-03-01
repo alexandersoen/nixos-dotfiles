@@ -17,14 +17,31 @@ in
   home.homeDirectory = "/home/asoen";
   home.stateVersion = "25.11";
 
+  home.sessionVariables = {
+    EDITOR = "vim";
+    VISUAL = "vim";
+  };
+
   home.packages = with pkgs; [
     feh
     google-chrome
+
+    # For scripts
+    skim
+    fd
   ];
 
   # Terminal
   xdg.configFile."alacritty" = {
     source = create_symlink "${dotfiles}/alacritty";
+    recursive = true;
+  };
+  xdg.configFile."tmux" = {
+    source = create_symlink "${dotfiles}/tmux";
+    recursive = true;
+  };
+  xdg.configFile."scripts" = {
+    source = create_symlink "${dotfiles}/scripts";
     recursive = true;
   };
 

@@ -47,6 +47,7 @@
     wget
     alacritty
     git
+    tmux
   ];
 
   fonts.packages = with pkgs; [
