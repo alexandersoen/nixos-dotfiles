@@ -23,9 +23,15 @@ in
     gcc
     ripgrep
 
+    # Lua
+    lua-language-server
+
     # Nix
     nil
     nixfmt
+
+    # C/C++
+    clang-tools
   ];
 
   programs.neovim = {
