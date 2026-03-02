@@ -88,7 +88,6 @@ in
     Service = {
       Type = "oneshot";
       ExecStart = "${pkgs.feh}/bin/feh --bg-fill ${wallpaper}";
-      RemainAfterExit = true;
     };
   };
 }
