@@ -5,6 +5,13 @@ let
   create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
 
   wallpaper = "${config.home.homeDirectory}/nixos-dotfiles/wallpapers/wallhaven-8ge2x1.png";
+
+  configs = {
+    alacritty = "alacritty";
+    tmux = "tmux";
+    scripts = "scripts";
+    picom = "picom";
+  };
 in
 
 {
@@ -31,18 +38,27 @@ in
     fd
   ];
 
-  # Terminal
-  xdg.configFile."alacritty" = {
-    source = create_symlink "${dotfiles}/alacritty";
+  # Config files
+  xdg.configFile = builtins.mapAttrs (name: subpath: {
+    source = create_symlink "${dotfiles}/${subpath}";
     recursive = true;
-  };
-  xdg.configFile."tmux" = {
-    source = create_symlink "${dotfiles}/tmux";
-    recursive = true;
-  };
-  xdg.configFile."scripts" = {
-    source = create_symlink "${dotfiles}/scripts";
-    recursive = true;
+  }) configs;
+
+  # picom
+  systemd.user.services.picom = {
+    Unit = {
+      Description = "Picom compositor";
+      After = [ "graphical-session-pre.target" ];
+      PartOf = [ "graphical-session.target" ];
+    };
+    Install = {
+      WantedBy = [ "graphical-session.target" ];
+    };
+    Service = {
+      # This points directly to the symlink created by your configs map
+      ExecStart = "${pkgs.picom}/bin/picom --config ${dotfiles}/picom/picom.conf";
+      Restart = "always";
+    };
   };
 
   # Bash

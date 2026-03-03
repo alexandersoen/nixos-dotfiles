@@ -35,7 +35,6 @@
   services.xserver.displayManager.sessionCommands = ''
     ${pkgs.xorg.xrandr}/bin/xrandr --output Virtual-1 --mode 2048x1152 &
   '';
-  services.picom.enable = true;
 
   users.users.asoen = {
     isNormalUser = true;
