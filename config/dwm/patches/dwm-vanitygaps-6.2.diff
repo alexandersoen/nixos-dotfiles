@@ -1,7 +1,7 @@
-From 051e4de72079bb0b8e50d2faa61b9a0ef36434b5 Mon Sep 17 00:00:00 2001
+From 9709d08daa290c8c7319571cd9e6ef4ec40e7683 Mon Sep 17 00:00:00 2001
 From: bakkeby <bakkeby@gmail.com>
-Date: Fri, 8 May 2020 16:51:00 +0200
-Subject: [PATCH 2/2] vanitygaps - adds gaps to layouts
+Date: Wed, 6 May 2020 17:21:25 +0200
+Subject: [PATCH] vanitygaps - adds gaps to layouts
 
 This patch differentiates between inner and outer gaps as well as
 horizontal and vertical gaps.
@@ -11,13 +11,13 @@ an even split of the available space and re-distributing the remainder
 among the available clients.
 ---
  config.def.h |  38 ++-
- dwm.c        |  43 +--
- vanitygaps.c | 822 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 867 insertions(+), 36 deletions(-)
+ dwm.c        |  35 +--
+ vanitygaps.c | 809 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 854 insertions(+), 28 deletions(-)
  create mode 100644 vanitygaps.c
 
 diff --git a/config.def.h b/config.def.h
-index 83910c1..91a9cfc 100644
+index 1c0b587..a886863 100644
 --- a/config.def.h
 +++ b/config.def.h
 @@ -3,6 +3,11 @@
@@ -60,9 +60,9 @@ index 83910c1..91a9cfc 100644
  };
  
  /* key definitions */
-@@ -74,6 +94,22 @@ static Key keys[] = {
- 	{ MODKEY|ShiftMask,             XK_l,      setcfact,       {.f = -0.25} },
- 	{ MODKEY|ShiftMask,             XK_o,      setcfact,       {.f =  0.00} },
+@@ -71,6 +91,22 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+ 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
  	{ MODKEY,                       XK_Return, zoom,           {0} },
 +	{ MODKEY|Mod4Mask,              XK_u,      incrgaps,       {.i = +1 } },
 +	{ MODKEY|Mod4Mask|ShiftMask,    XK_u,      incrgaps,       {.i = -1 } },
@@ -84,10 +84,10 @@ index 83910c1..91a9cfc 100644
  	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
  	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 diff --git a/dwm.c b/dwm.c
-index 5592c57..7d503cb 100644
+index 4465af1..c3b2d82 100644
 --- a/dwm.c
 +++ b/dwm.c
-@@ -120,6 +120,10 @@ struct Monitor {
+@@ -119,6 +119,10 @@ struct Monitor {
  	int by;               /* bar geometry */
  	int mx, my, mw, mh;   /* screen size */
  	int wx, wy, ww, wh;   /* window area  */
@@ -98,7 +98,7 @@ index 5592c57..7d503cb 100644
  	unsigned int seltags;
  	unsigned int sellt;
  	unsigned int tagset[2];
-@@ -210,7 +214,6 @@ static void sigchld(int unused);
+@@ -208,7 +212,6 @@ static void sigchld(int unused);
  static void spawn(const Arg *arg);
  static void tag(const Arg *arg);
  static void tagmon(const Arg *arg);
@@ -106,7 +106,7 @@ index 5592c57..7d503cb 100644
  static void togglebar(const Arg *arg);
  static void togglefloating(const Arg *arg);
  static void toggletag(const Arg *arg);
-@@ -640,6 +643,10 @@ createmon(void)
+@@ -638,6 +641,10 @@ createmon(void)
  	m->nmaster = nmaster;
  	m->showbar = showbar;
  	m->topbar = topbar;
@@ -117,7 +117,7 @@ index 5592c57..7d503cb 100644
  	m->lt[0] = &layouts[0];
  	m->lt[1] = &layouts[1 % LENGTH(layouts)];
  	strncpy(m->ltsymbol, layouts[0].symbol, sizeof m->ltsymbol);
-@@ -1691,40 +1698,6 @@ tagmon(const Arg *arg)
+@@ -1670,32 +1677,6 @@ tagmon(const Arg *arg)
  	sendmon(selmon->sel, dirtomon(arg->i));
  }
  
@@ -125,15 +125,9 @@ index 5592c57..7d503cb 100644
 -tile(Monitor *m)
 -{
 -	unsigned int i, n, h, mw, my, ty;
--	float mfacts = 0, sfacts = 0;
 -	Client *c;
 -
--	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
--		if (n < m->nmaster)
--			mfacts += c->cfact;
--		else
--			sfacts += c->cfact;
--	}
+-	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
 -	if (n == 0)
 -		return;
 -
@@ -143,15 +137,13 @@ index 5592c57..7d503cb 100644
 -		mw = m->ww;
 -	for (i = my = ty = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 -		if (i < m->nmaster) {
--			h = (m->wh - my) * (c->cfact / mfacts);
+-			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
 -			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), 0);
 -			my += HEIGHT(c);
--			mfacts -= c->cfact;
 -		} else {
--			h = (m->wh - ty) * (c->cfact / sfacts);
+-			h = (m->wh - ty) / (n - i);
 -			resize(c, m->wx + mw, m->wy + ty, m->ww - mw - (2*c->bw), h - (2*c->bw), 0);
 -			ty += HEIGHT(c);
--			sfacts -= c->cfact;
 -		}
 -}
 -
@@ -160,10 +152,10 @@ index 5592c57..7d503cb 100644
  {
 diff --git a/vanitygaps.c b/vanitygaps.c
 new file mode 100644
-index 0000000..1a816b6
+index 0000000..3f31593
 --- /dev/null
 +++ b/vanitygaps.c
-@@ -0,0 +1,822 @@
+@@ -0,0 +1,809 @@
 +/* Key binding functions */
 +static void defaultgaps(const Arg *arg);
 +static void incrgaps(const Arg *arg);
@@ -332,26 +324,24 @@ index 0000000..1a816b6
 +getfacts(Monitor *m, int msize, int ssize, float *mf, float *sf, int *mr, int *sr)
 +{
 +	unsigned int n;
-+	float mfacts = 0, sfacts = 0;
++	float mfacts, sfacts;
 +	int mtotal = 0, stotal = 0;
 +	Client *c;
 +
-+	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++)
-+		if (n < m->nmaster)
-+			mfacts += c->cfact;
-+		else
-+			sfacts += c->cfact;
++	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
++	mfacts = MIN(n, m->nmaster);
++	sfacts = n - m->nmaster;
 +
 +	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++)
 +		if (n < m->nmaster)
-+			mtotal += msize * (c->cfact / mfacts);
++			mtotal += msize / mfacts;
 +		else
-+			stotal += ssize * (c->cfact / sfacts);
++			stotal += ssize / sfacts;
 +
 +	*mf = mfacts; // total factor of master area
 +	*sf = sfacts; // total factor of stack area
-+	*mr = msize - mtotal; // the remainder (rest) of pixels after a cfacts master split
-+	*sr = ssize - stotal; // the remainder (rest) of pixels after a cfacts stack split
++	*mr = msize - mtotal; // the remainder (rest) of pixels after an even master split
++	*sr = ssize - stotal; // the remainder (rest) of pixels after an even stack split
 +}
 +
 +/***
@@ -394,10 +384,10 @@ index 0000000..1a816b6
 +
 +	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++) {
 +		if (i < m->nmaster) {
-+			resize(c, mx, my, mw * (c->cfact / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
++			resize(c, mx, my, (mw / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
 +			mx += WIDTH(c) + iv;
 +		} else {
-+			resize(c, sx, sy, sw * (c->cfact / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), sh - (2*c->bw), 0);
++			resize(c, sx, sy, (sw / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), sh - (2*c->bw), 0);
 +			sx += WIDTH(c) + iv;
 +		}
 +	}
@@ -436,10 +426,10 @@ index 0000000..1a816b6
 +
 +	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++) {
 +		if (i < m->nmaster) {
-+			resize(c, mx, my, mw * (c->cfact / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
++			resize(c, mx, my, (mw / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
 +			mx += WIDTH(c) + iv;
 +		} else {
-+			resize(c, sx, sy, sw - (2*c->bw), sh * (c->cfact / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), 0);
++			resize(c, sx, sy, sw - (2*c->bw), (sh / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), 0);
 +			sy += HEIGHT(c) + ih;
 +		}
 +	}
@@ -497,20 +487,20 @@ index 0000000..1a816b6
 +	/* calculate facts */
 +	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++) {
 +		if (!m->nmaster || n < m->nmaster)
-+			mfacts += c->cfact;
++			mfacts += 1;
 +		else if ((n - m->nmaster) % 2)
-+			lfacts += c->cfact; // total factor of left hand stack area
++			lfacts += 1; // total factor of left hand stack area
 +		else
-+			rfacts += c->cfact; // total factor of right hand stack area
++			rfacts += 1; // total factor of right hand stack area
 +	}
 +
 +	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++)
 +		if (!m->nmaster || n < m->nmaster)
-+			mtotal += mh * (c->cfact / mfacts);
++			mtotal += mh / mfacts;
 +		else if ((n - m->nmaster) % 2)
-+			ltotal += lh * (c->cfact / lfacts);
++			ltotal += lh / lfacts;
 +		else
-+			rtotal += rh * (c->cfact / rfacts);
++			rtotal += rh / rfacts;
 +
 +	mrest = mh - mtotal;
 +	lrest = lh - ltotal;
@@ -519,15 +509,15 @@ index 0000000..1a816b6
 +	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++) {
 +		if (!m->nmaster || i < m->nmaster) {
 +			/* nmaster clients are stacked vertically, in the center of the screen */
-+			resize(c, mx, my, mw - (2*c->bw), mh * (c->cfact / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), 0);
++			resize(c, mx, my, mw - (2*c->bw), (mh / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), 0);
 +			my += HEIGHT(c) + ih;
 +		} else {
 +			/* stack clients are stacked vertically */
 +			if ((i - m->nmaster) % 2 ) {
-+				resize(c, lx, ly, lw - (2*c->bw), lh * (c->cfact / lfacts) + ((i - 2*m->nmaster) < 2*lrest ? 1 : 0) - (2*c->bw), 0);
++				resize(c, lx, ly, lw - (2*c->bw), (lh / lfacts) + ((i - 2*m->nmaster) < 2*lrest ? 1 : 0) - (2*c->bw), 0);
 +				ly += HEIGHT(c) + ih;
 +			} else {
-+				resize(c, rx, ry, rw - (2*c->bw), rh * (c->cfact / rfacts) + ((i - 2*m->nmaster) < 2*rrest ? 1 : 0) - (2*c->bw), 0);
++				resize(c, rx, ry, rw - (2*c->bw), (rh / rfacts) + ((i - 2*m->nmaster) < 2*rrest ? 1 : 0) - (2*c->bw), 0);
 +				ry += HEIGHT(c) + ih;
 +			}
 +		}
@@ -578,11 +568,11 @@ index 0000000..1a816b6
 +	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 +		if (i < m->nmaster) {
 +			/* nmaster clients are stacked horizontally, in the center of the screen */
-+			resize(c, mx, my, mw * (c->cfact / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
++			resize(c, mx, my, (mw / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
 +			mx += WIDTH(c) + iv*mivf;
 +		} else {
 +			/* stack clients are stacked horizontally */
-+			resize(c, sx, sy, sw * (c->cfact / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), sh - (2*c->bw), 0);
++			resize(c, sx, sy, (sw / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), sh - (2*c->bw), 0);
 +			sx += WIDTH(c) + iv;
 +		}
 +}
@@ -625,7 +615,7 @@ index 0000000..1a816b6
 +
 +	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 +		if (i < m->nmaster) {
-+			resize(c, mx, my, mw - (2*c->bw), mh * (c->cfact / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), 0);
++			resize(c, mx, my, mw - (2*c->bw), (mh / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), 0);
 +			my += HEIGHT(c) + ih;
 +		} else {
 +			resize(c, sx, sy, sw - (2*c->bw), sh - (2*c->bw), 0);
@@ -834,8 +824,8 @@ index 0000000..1a816b6
 +	int mx = 0, my = 0, mh = 0, mw = 0;
 +	int sx = 0, sy = 0, sh = 0, sw = 0;
 +	int ntop, nbottom = 1;
-+	float mfacts = 0, sfacts = 0;
-+	int mrest, srest, mtotal = 0, stotal = 0;
++	float mfacts, sfacts;
++	int mrest, srest;
 +
 +	/* Count windows */
 +	getgaps(m, &oh, &ov, &ih, &iv, &n);
@@ -861,28 +851,17 @@ index 0000000..1a816b6
 +		sw = m->ww - 2*ov - iv * (nbottom - 1);
 +	}
 +
-+	/* calculate facts */
-+	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
-+		if (i < ntop)
-+			mfacts += c->cfact;
-+		else
-+			sfacts += c->cfact;
-+
-+	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
-+		if (i < ntop)
-+			mtotal += mh * (c->cfact / mfacts);
-+		else
-+			stotal += sw * (c->cfact / sfacts);
-+
-+	mrest = mh - mtotal;
-+	srest = sw - stotal;
++	mfacts = ntop;
++	sfacts = nbottom;
++	mrest = mw - (mw / ntop) * ntop;
++	srest = sw - (sw / nbottom) * nbottom;
 +
 +	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 +		if (i < ntop) {
-+			resize(c, mx, my, mw * (c->cfact / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
++			resize(c, mx, my, (mw / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), mh - (2*c->bw), 0);
 +			mx += WIDTH(c) + iv;
 +		} else {
-+			resize(c, sx, sy, sw * (c->cfact / sfacts) + ((i - ntop) < srest ? 1 : 0) - (2*c->bw), sh - (2*c->bw), 0);
++			resize(c, sx, sy, (sw / sfacts) + ((i - ntop) < srest ? 1 : 0) - (2*c->bw), sh - (2*c->bw), 0);
 +			sx += WIDTH(c) + iv;
 +		}
 +}
@@ -979,10 +958,10 @@ index 0000000..1a816b6
 +
 +	for (i = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
 +		if (i < m->nmaster) {
-+			resize(c, mx, my, mw - (2*c->bw), mh * (c->cfact / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), 0);
++			resize(c, mx, my, mw - (2*c->bw), (mh / mfacts) + (i < mrest ? 1 : 0) - (2*c->bw), 0);
 +			my += HEIGHT(c) + ih;
 +		} else {
-+			resize(c, sx, sy, sw - (2*c->bw), sh * (c->cfact / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), 0);
++			resize(c, sx, sy, sw - (2*c->bw), (sh / sfacts) + ((i - m->nmaster) < srest ? 1 : 0) - (2*c->bw), 0);
 +			sy += HEIGHT(c) + ih;
 +		}
 +}
