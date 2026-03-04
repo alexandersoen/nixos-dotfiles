@@ -32,9 +32,6 @@
       src = /home/asoen/nixos-dotfiles/config/dwm;
     };
   };
-  services.xserver.displayManager.sessionCommands = ''
-    ${pkgs.xorg.xrandr}/bin/xrandr --output Virtual-1 --mode 2048x1152 &
-  '';
 
   users.users.asoen = {
     isNormalUser = true;
@@ -57,14 +54,20 @@
     nerd-fonts.jetbrains-mono
   ];
 
+  security.rtkit.enable = true;
+
   nix.settings.experimental-features = [
     "nix-command"
     "flakes"
   ];
   system.stateVersion = "25.11";
 
-  virtualisation.virtualbox.guest.enable = true;
-  virtualisation.virtualbox.guest.dragAndDrop = true;
+  # For VM
+  # services.xserver.displayManager.sessionCommands = ''
+  #   ${pkgs.xorg.xrandr}/bin/xrandr --output Virtual-1 --mode 2048x1152 &
+  # '';
+  # virtualisation.virtualbox.guest.enable = true;
+  # virtualisation.virtualbox.guest.dragAndDrop = true;
 
   nixpkgs.config.allowUnfree = true;
 }

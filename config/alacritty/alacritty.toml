@@ -4,3 +4,4 @@ x = 6
 
 [font]
 normal = { family = "JetBrainsMono Nerd Font Propo", style = "Regular" }
+size = 8
