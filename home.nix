@@ -19,6 +19,7 @@ in
   imports = [
     ./modules/suckless.nix
     ./modules/neovim.nix
+    ./modules/academic.nix
   ];
 
   home.username = "asoen";
@@ -99,7 +100,7 @@ in
     Unit = {
       Description = "Set wallpaper using feh";
       After = [ "graphical-session-pre.target" ];
-      Partof = [ "graphical-session.target" ];
+      PartOf = [ "graphical-session.target" ];
     };
 
     Install = {
