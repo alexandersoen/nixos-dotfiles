@@ -26,9 +26,9 @@ static const char *colors[][3]      = {
 
 /* For keycodes */
 #include <X11/XF86keysym.h>
-static const char *upvol[]   = { "wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%+", NULL };
-static const char *downvol[] = { "wpctl", "set-volume", "@DEFAULT_AUDIO_SINK@", "5%-", NULL };
-static const char *mutevol[] = { "wpctl", "set-mute",   "@DEFAULT_AUDIO_SINK@", "toggle", NULL };
+static const char *upvol[]   = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%+ && pkill -RTMIN+10 dwmblocks", NULL };
+static const char *downvol[] = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%- && pkill -RTMIN+10 dwmblocks", NULL };
+static const char *mutevol[] = { "sh", "-c", "wpctl set-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 dwmblocks", NULL };
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
