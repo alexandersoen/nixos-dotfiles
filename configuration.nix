@@ -35,7 +35,10 @@
 
   users.users.asoen = {
     isNormalUser = true;
-    extraGroups = [ "wheel" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+    ];
     packages = with pkgs; [
       tree
     ];
@@ -48,6 +51,7 @@
     git
     tmux
     xclip
+    lm_sensors
   ];
 
   fonts.packages = with pkgs; [

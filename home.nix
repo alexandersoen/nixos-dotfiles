@@ -11,6 +11,7 @@ let
     tmux = "tmux";
     scripts = "scripts";
     picom = "picom";
+    statusbar = "statusbar";
   };
 in
 
@@ -32,6 +33,10 @@ in
   home.packages = with pkgs; [
     feh
     google-chrome
+    unzip
+
+    opencode
+    zathura
 
     # For scripts
     skim
