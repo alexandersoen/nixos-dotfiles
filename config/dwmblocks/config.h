@@ -9,7 +9,7 @@ static const Block blocks[] = {
 	{"",	"~/.config/statusbar/sb-cpu",		10,	18},
 	/* {"",	"sb-mailbox",	180,	12}, */
 	{"",	"~/.config/statusbar/sb-nettraf",	1,	16},
-	{"",	"~/.config/statusbar/sb-volume",	0,	10},
+	{"",	"~/.config/statusbar/sb-volume",	5,	10},
 	{"",	"~/.config/statusbar/sb-battery",	5,	3},
 	{"",	"~/.config/statusbar/sb-internet",	5,	4},
 	{"",	"~/.config/statusbar/sb-clock",	60,	1},

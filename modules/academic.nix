@@ -8,5 +8,7 @@
     texlab
     ltex-ls
     bibtex-tidy
+
+    zotero
   ];
 }

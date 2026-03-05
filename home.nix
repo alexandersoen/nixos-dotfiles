@@ -38,6 +38,7 @@ in
 
     opencode
     zathura
+    spotify
 
     # For scripts
     skim

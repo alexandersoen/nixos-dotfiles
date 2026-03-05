@@ -52,7 +52,11 @@
     tmux
     xclip
     lm_sensors
+    dunst
+    libnotify
   ];
+
+  services.dbus.enable = true;
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
