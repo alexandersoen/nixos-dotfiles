@@ -12,6 +12,7 @@ let
     scripts = "scripts";
     picom = "picom";
     statusbar = "statusbar";
+    ruff = "ruff";
   };
 in
 
@@ -20,6 +21,7 @@ in
     ./modules/suckless.nix
     ./modules/neovim.nix
     ./modules/academic.nix
+    ./modules/python.nix
   ];
 
   home.username = "asoen";
@@ -44,6 +46,14 @@ in
     skim
     fd
   ];
+
+  # Default apps
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "application/pdf" = [ "org.pwmt.zathura.desktop" ];
+    };
+  };
 
   # Config files
   xdg.configFile = builtins.mapAttrs (name: subpath: {

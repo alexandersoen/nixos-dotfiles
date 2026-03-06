@@ -57,6 +57,13 @@
     libnotify
   ];
 
+  # Need to this to get python uv to work (ie, non-nix installations)
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc
+    zlib
+  ];
+
   services.dbus.enable = true;
 
   fonts.packages = with pkgs; [
