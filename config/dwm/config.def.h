@@ -12,23 +12,20 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = { "JetBrainsMono Nerd Font:size=10" };
 static const char dmenufont[]       = "JetBrainsMono Nerd Font:size=10";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
-static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#eeeeee";
-static const char col_cyan[]        = "#005577";
-static const char col_pink[]        = "#bb7c93";
-static const char *colors[][3]      = {
-	/*               fg         bg         border   */
-	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
-	[SchemeSel]  = { col_gray4, col_cyan,  col_pink  },
+static char normbgcolor[]           = "#222222";
+static char normbordercolor[]       = "#444444";
+static char normfgcolor[]           = "#bbbbbb";
+static char selfgcolor[]            = "#eeeeee";
+static char selbordercolor[]        = "#bb7c93";
+static char selbgcolor[]            = "#005577";
+static char *colors[][3] = {
+       /*               fg           bg           border   */
+       [SchemeNorm] = { normfgcolor, normbgcolor, normbordercolor },
+       [SchemeSel]  = { selfgcolor,  selbgcolor,  selbordercolor  },
 };
 
 /* For keycodes */
 #include <X11/XF86keysym.h>
-static const char *upvol[]   = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%+ && pkill -RTMIN+10 dwmblocks", NULL };
-static const char *downvol[] = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%- && pkill -RTMIN+10 dwmblocks", NULL };
-static const char *mutevol[] = { "sh", "-c", "wpctl set-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 dwmblocks", NULL };
 
 /* tagging */
 static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
@@ -74,8 +71,14 @@ static const Layout layouts[] = {
 
 /* commands */
 static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
+static const char *upvol[]   = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%+ && pkill -RTMIN+10 dwmblocks", NULL };
+static const char *downvol[] = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%- && pkill -RTMIN+10 dwmblocks", NULL };
+static const char *mutevol[] = { "sh", "-c", "wpctl set-mute @DEFAULT_SINK@ toggle && pkill -RTMIN+10 dwmblocks", NULL };
+static const char *lightup[] = { "sh", "-c", "light -A 10", NULL };
+static const char *lightdown[] = { "sh", "-c", "light -U 10", NULL };
+static const char *toggletrackpad[] = { "sh", "-c", "~/.config/scripts/toggle_trackpad.sh", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -100,6 +103,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY,                       XK_F5,     xrdb,           {.v = NULL } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -112,7 +116,10 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
   { 0,                            XF86XK_AudioLowerVolume,     spawn,          {.v = downvol } },
   { 0,                            XF86XK_AudioMute,            spawn,          {.v = mutevol } },
-  { 0,                            XF86XK_AudioRaiseVolume,     spawn,          {.v = upvol   } },
+  { 0,                            XF86XK_AudioRaiseVolume,     spawn,          {.v = upvol } },
+  { 0,                            XF86XK_MonBrightnessUp,      spawn,          {.v = lightup } },
+  { 0,                            XF86XK_MonBrightnessDown,    spawn,          {.v = lightdown } },
+  { MODKEY,                       XK_F12,                      spawn,          {.v = toggletrackpad } },
 };
 
 /* button definitions */

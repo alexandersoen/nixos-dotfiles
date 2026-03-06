@@ -38,6 +38,7 @@
     extraGroups = [
       "wheel"
       "networkmanager"
+      "video"
     ];
     packages = with pkgs; [
       tree
