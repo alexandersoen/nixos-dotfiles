@@ -13,6 +13,7 @@ let
     picom = "picom";
     statusbar = "statusbar";
     ruff = "ruff";
+    dunst = "dunst";
   };
 in
 

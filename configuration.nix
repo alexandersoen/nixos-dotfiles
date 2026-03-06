@@ -66,6 +66,8 @@
 
   services.dbus.enable = true;
 
+  services.libinput.touchpad.naturalScrolling = true;
+
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
   ];
