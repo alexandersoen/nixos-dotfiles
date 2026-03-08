@@ -46,6 +46,7 @@ in
     # For scripts
     skim
     fd
+    xdotool
   ];
 
   # Default apps

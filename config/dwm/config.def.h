@@ -74,6 +74,7 @@ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() 
 static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbordercolor, "-sf", selfgcolor, NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
 static const char *zoterotui[] = { "alacritty", "-e", "zotero-tui", NULL };
+static const char *googlecomm[] = { "sh", "-c", "~/.config/scripts/chrome_comm_tabs.sh", NULL };
 
 static const char *upvol[]   = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%+ && pkill -RTMIN+10 dwmblocks", NULL };
 static const char *downvol[] = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%- && pkill -RTMIN+10 dwmblocks", NULL };
@@ -87,6 +88,7 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_v,      spawn,          {.v = zoterotui } },
+	{ MODKEY,                       XK_m,      spawn,          {.v = googlecomm } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },

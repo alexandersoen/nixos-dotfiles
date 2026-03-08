@@ -12,6 +12,7 @@ in
     # LSP + Formatters
     texlab
     ltex-ls
+    tex-fmt
     bibtex-tidy
 
     zotero
