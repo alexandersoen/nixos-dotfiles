@@ -40,6 +40,7 @@ in
     unzip
 
     opencode
+    codex
     zathura
     spotify
 
