@@ -23,6 +23,7 @@ in
     ./modules/neovim.nix
     ./modules/academic.nix
     ./modules/python.nix
+    ./modules/codex.nix
   ];
 
   home.username = "asoen";
@@ -40,7 +41,6 @@ in
     unzip
 
     opencode
-    codex
     zathura
     spotify
 
@@ -49,6 +49,12 @@ in
     fd
     xdotool
   ];
+
+  my.codex = {
+    enable = true;
+    version = "0.113.0";
+    hash = "sha256-GN/hdOBMtA5WZ7qypBAOBxvD/8vC9BfjxZiNZYIX6fc=";
+  };
 
   # Default apps
   xdg.mimeApps = {

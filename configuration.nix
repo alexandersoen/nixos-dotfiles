@@ -9,6 +9,8 @@
 {
   imports = [
     /etc/nixos/hardware-configuration.nix
+    ./modules/power.nix
+    ./modules/usb.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
