@@ -24,6 +24,7 @@ in
     ./modules/academic.nix
     ./modules/python.nix
     ./modules/codex.nix
+    ./modules/lockscreen.nix
   ];
 
   home.username = "asoen";
@@ -52,9 +53,11 @@ in
 
   my.codex = {
     enable = true;
-    version = "0.113.0";
-    hash = "sha256-GN/hdOBMtA5WZ7qypBAOBxvD/8vC9BfjxZiNZYIX6fc=";
+    version = "0.114.0";
+    hash = "sha256-kinejFHI7zBWW7UHyXou3ASoCzjkmkNj8zf+Bb7fNOs=";
   };
+
+  services.flameshot.enable = true;
 
   # Default apps
   xdg.mimeApps = {
@@ -130,6 +133,14 @@ in
     Service = {
       Type = "oneshot";
       ExecStart = "${pkgs.feh}/bin/feh --bg-fill ${wallpaper}";
+    };
+  };
+
+  # Monitors
+  programs.autorandr = {
+    enable = true;
+    hooks.postswitch = {
+      wallpaper = "${pkgs.feh}/bin/feh --no-fehbg --bg-fill ${wallpaper}";
     };
   };
 }

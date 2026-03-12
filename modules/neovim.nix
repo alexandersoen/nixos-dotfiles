@@ -26,6 +26,10 @@ in
     # Lua
     lua-language-server
 
+    # Bash
+    bash-language-server
+    shfmt
+
     # Nix
     nil
     nixfmt
