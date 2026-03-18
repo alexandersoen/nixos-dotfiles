@@ -23,7 +23,9 @@ in
     ./modules/neovim.nix
     ./modules/academic.nix
     ./modules/python.nix
+    ./modules/golang.nix
     ./modules/codex.nix
+    ./modules/opencode.nix
     ./modules/lockscreen.nix
   ];
 
@@ -40,8 +42,9 @@ in
     feh
     google-chrome
     unzip
+    htop
+    inetutils
 
-    opencode
     zathura
     spotify
 
@@ -55,6 +58,12 @@ in
     enable = true;
     version = "0.114.0";
     hash = "sha256-kinejFHI7zBWW7UHyXou3ASoCzjkmkNj8zf+Bb7fNOs=";
+  };
+
+  my.opencode = {
+    enable = true;
+    version = "1.2.24";
+    hash = "sha256-IGRO9rhZdfC0nD6hMcjUnN7oVEGbO4z7JEduAXh6hx4=";
   };
 
   services.flameshot.enable = true;
@@ -116,6 +125,7 @@ in
       init.defaultBranch = "main";
       pull.rebase = true;
       core.editor = "nvim";
+      credential.helper = "store";
     };
   };
 
