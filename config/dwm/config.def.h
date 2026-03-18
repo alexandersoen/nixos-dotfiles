@@ -49,6 +49,7 @@ static const int refreshrate = 120;  /* refresh rate (per second) for client mov
 
 #define FORCE_VSPLIT 1  /* nrowgrid layout: force two clients to always split vertically */
 #include "vanitygaps.c"
+#include "movestack.c"
 
 static const Layout layouts[] = {
 	/* symbol     arrange function */
