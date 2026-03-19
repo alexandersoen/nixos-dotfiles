@@ -76,6 +76,7 @@ static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", normbgco
 static const char *termcmd[]  = { "alacritty", NULL };
 static const char *zoterotui[] = { "alacritty", "-e", "zotero-tui", NULL };
 static const char *googlecomm[] = { "sh", "-c", "~/.config/scripts/chrome_comm_tabs.sh", NULL };
+static const char *templatecmd[] = { "sh", "-c", "~/.config/scripts/new_from_template.sh", NULL };
 
 static const char *upvol[]   = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%+ && pkill -RTMIN+10 dwmblocks", NULL };
 static const char *downvol[] = { "sh", "-c", "wpctl set-volume @DEFAULT_SINK@ 5%- && pkill -RTMIN+10 dwmblocks", NULL };
@@ -87,6 +88,7 @@ static const char *toggletrackpad[] = { "sh", "-c", "~/.config/scripts/toggle_tr
 static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_t,      spawn,          {.v = templatecmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_v,      spawn,          {.v = zoterotui } },
 	{ MODKEY,                       XK_m,      spawn,          {.v = googlecomm } },
@@ -122,6 +124,7 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_r,      quit,           {1} },
   { 0,                            XF86XK_AudioLowerVolume,     spawn,          {.v = downvol } },
   { 0,                            XF86XK_AudioMute,            spawn,          {.v = mutevol } },
   { 0,                            XF86XK_AudioRaiseVolume,     spawn,          {.v = upvol } },

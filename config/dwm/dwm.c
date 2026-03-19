@@ -1409,7 +1409,10 @@ propertynotify(XEvent *e)
 void
 quit(const Arg *arg)
 {
-	running = 0;
+  if (arg->i)
+    execvp("dwm", (char*[]){ "dwm", NULL });
+  else
+	  running = 0;
 }
 
 Monitor *
