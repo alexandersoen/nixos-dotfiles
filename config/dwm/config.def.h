@@ -38,6 +38,9 @@ static const Rule rules[] = {
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
 	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
+	{ "Spotify",  "spotify",  NULL,       1 << 7,       0,           -1 },
+	{ "Zotero",   "Navigator", NULL,      1 << 8,       0,           -1 },
+	{ "Google-chrome", "wm_comm_chrome", NULL, 1 << 4, 0, -1 },
 };
 
 /* layout(s) */
@@ -150,3 +153,20 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
+static const char *ipcsockpath = "/tmp/dwm.sock";
+static IPCCommand ipccommands[] = {
+  IPCCOMMAND(  view,                1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  toggleview,          1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  tag,                 1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  toggletag,           1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  tagmon,              1,      {ARG_TYPE_UINT}   ),
+  IPCCOMMAND(  focusmon,            1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  focusstack,          1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  zoom,                1,      {ARG_TYPE_NONE}   ),
+  IPCCOMMAND(  incnmaster,          1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  killclient,          1,      {ARG_TYPE_SINT}   ),
+  IPCCOMMAND(  togglefloating,      1,      {ARG_TYPE_NONE}   ),
+  IPCCOMMAND(  setmfact,            1,      {ARG_TYPE_FLOAT}  ),
+  IPCCOMMAND(  setlayoutsafe,       1,      {ARG_TYPE_PTR}    ),
+  IPCCOMMAND(  quit,                1,      {ARG_TYPE_NONE}   )
+};
