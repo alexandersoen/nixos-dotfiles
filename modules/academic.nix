@@ -8,6 +8,7 @@ in
 {
   home.packages = with pkgs; [
     texliveFull
+    poppler-utils
 
     # LSP + Formatters
     texlab
