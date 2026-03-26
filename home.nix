@@ -14,6 +14,7 @@ let
     statusbar = "statusbar";
     ruff = "ruff";
     dunst = "dunst";
+    zathura = "zathura";
   };
 in
 
@@ -56,8 +57,8 @@ in
 
   my.codex = {
     enable = true;
-    version = "0.114.0";
-    hash = "sha256-kinejFHI7zBWW7UHyXou3ASoCzjkmkNj8zf+Bb7fNOs=";
+    version = "0.116.0";
+    hash = "sha256-r6CJwDLDExeSGrwC+4gUU67UqoADWEEhce/NBp7OoeM=";
   };
 
   my.opencode = {

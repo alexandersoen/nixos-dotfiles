@@ -1,0 +1,3 @@
+set selection-clipboard "clipboard"
+map yp exec "printf '%s' '$FILE' | xclip -selection clipboard"
+map wn exec "zathura --fork -P $PAGE '$FILE'"
