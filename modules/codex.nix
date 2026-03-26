@@ -8,7 +8,7 @@
 let
   cfg = config.my.codex;
 
-  codex-bin = pkgs.stdenvNoCC.mkDerivation {
+  codex-raw = pkgs.stdenvNoCC.mkDerivation {
     pname = "codex";
     inherit (cfg) version;
 
@@ -30,6 +30,17 @@ let
       install -m755 codex-x86_64-unknown-linux-musl $out/bin/codex
     '';
   };
+
+  # The upstream Codex release currently probes `/usr/bin/bwrap` directly.
+  # On NixOS, bubblewrap lives in the store, so run Codex inside a small
+  # FHS environment that exposes `/usr/bin/bwrap`.
+  codex-bin = pkgs.buildFHSEnv {
+    name = "codex";
+    targetPkgs = pkgs: [
+      pkgs.bubblewrap
+    ];
+    runScript = "${codex-raw}/bin/codex";
+  };
 in
 {
   options.my.codex = {
@@ -49,6 +60,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [ codex-bin ];
+    home.packages = [
+      codex-bin
+    ];
   };
 }
