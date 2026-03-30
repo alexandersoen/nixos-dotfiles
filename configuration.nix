@@ -93,7 +93,24 @@
     powerOnBoot = true;
   };
 
+  hardware.ipu6 = {
+    enable = true;
+    platform = "ipu6ep";
+  };
+
   programs.light.enable = true;
+
+  nixpkgs.overlays = [
+    (final: prev: {
+      gst_all_1 = prev.gst_all_1 // {
+        # nixpkgs currently builds icamerasrc-ipu6ep with the plain ipu6 HAL.
+        # Force the Alder/Raptor Lake variant so the IPU6 relay produces frames.
+        icamerasrc-ipu6ep = prev.gst_all_1.icamerasrc-ipu6.override {
+          ipu6-camera-hal = prev.ipu6ep-camera-hal;
+        };
+      };
+    })
+  ];
 
   nix.settings.experimental-features = [
     "nix-command"
