@@ -98,6 +98,34 @@
     platform = "ipu6ep";
   };
 
+  services.v4l2-relayd.instances.ipu6.input = {
+    # The default 1280x720@30 path is unstable on this IPU6 stack and
+    # repeatedly times out during VIDIOC_STREAMON. Use a lighter mode.
+    width = 640;
+    height = 480;
+    framerate = 15;
+  };
+
+  systemd.services.v4l2-relayd-ipu6 = {
+    preStart = lib.mkForce ''
+      mkdir -p "$(dirname "$V4L2_DEVICE_FILE")"
+
+      # Keep the relay on a stable browser-facing node.
+      if [ -e /dev/video1 ]; then
+        echo /dev/video1 > "$V4L2_DEVICE_FILE"
+      else
+        ${config.boot.kernelPackages.v4l2loopback.bin}/bin/v4l2loopback-ctl add \
+          -x 1 \
+          -n "Intel MIPI Camera" \
+          /dev/video1 > "$V4L2_DEVICE_FILE"
+      fi
+    '';
+
+    # Keep the loopback node stable across relay restarts so browsers do not
+    # lose the camera when systemd restarts the relay process.
+    postStop = lib.mkForce "";
+  };
+
   programs.light.enable = true;
 
   nixpkgs.overlays = [

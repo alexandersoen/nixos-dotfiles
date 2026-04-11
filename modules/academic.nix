@@ -9,6 +9,7 @@ in
   home.packages = with pkgs; [
     texliveFull
     poppler-utils
+    pandoc
 
     # LSP + Formatters
     texlab
