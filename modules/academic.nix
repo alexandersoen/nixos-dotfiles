@@ -17,6 +17,7 @@ in
     tex-fmt
     bibtex-tidy
 
+    sqlite
     zotero
     zotero-tui-pkg
     xclip

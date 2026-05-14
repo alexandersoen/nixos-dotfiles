@@ -28,6 +28,7 @@ in
     ./modules/codex.nix
     ./modules/opencode.nix
     ./modules/lockscreen.nix
+    ./modules/utils.nix
   ];
 
   home.username = "asoen";
@@ -49,16 +50,14 @@ in
     zathura
     spotify
 
-    # For scripts
-    skim
-    fd
-    xdotool
+    # Image manip
+    gimp
   ];
 
   my.codex = {
     enable = true;
-    version = "0.116.0";
-    hash = "sha256-r6CJwDLDExeSGrwC+4gUU67UqoADWEEhce/NBp7OoeM=";
+    version = "0.130.0";
+    hash = "sha256-Fneee3hXUIp2ijbX1OCE7sM27COUbtcKmwlIm4+GEZA=";
   };
 
   my.opencode = {
