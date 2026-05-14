@@ -15,6 +15,8 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  # IPU6 cameras are currently affected by a regression on 6.16+.
+  boot.kernelPackages = pkgs.linuxPackages_6_12;
 
   networking.hostName = "ngunnawal";
   networking.networkmanager.enable = true;
@@ -62,6 +64,7 @@
     lm_sensors
     dunst
     libnotify
+    gnumake
   ];
 
   # Need to this to get python uv to work (ie, non-nix installations)
@@ -110,14 +113,14 @@
     preStart = lib.mkForce ''
       mkdir -p "$(dirname "$V4L2_DEVICE_FILE")"
 
-      # Keep the relay on a stable browser-facing node.
-      if [ -e /dev/video1 ]; then
-        echo /dev/video1 > "$V4L2_DEVICE_FILE"
+      # Keep the relay on a stable browser-facing node away from the raw IPU6 range.
+      if [ -e /dev/video50 ]; then
+        echo /dev/video50 > "$V4L2_DEVICE_FILE"
       else
         ${config.boot.kernelPackages.v4l2loopback.bin}/bin/v4l2loopback-ctl add \
           -x 1 \
           -n "Intel MIPI Camera" \
-          /dev/video1 > "$V4L2_DEVICE_FILE"
+          /dev/video50 > "$V4L2_DEVICE_FILE"
       fi
     '';
 
